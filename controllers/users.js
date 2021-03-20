@@ -1,21 +1,21 @@
 const User = require('../models/user');
 
-module.exports.getUsers = (request, response) => {
+module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => response.send({ data: users }))
-    .catch((error) => response.status(500).send({ message: error.message }));
+    .then((users) => res.send({ data: users }))
+    .catch((error) => res.status(500).send({ message: error.message }));
 };
 
-module.exports.getUserById = (request, response) => {
-  User.findById(request.params._id)
-    .then((user) => response.send({ data: user }))
-    .catch((error) => response.status(500).send({ message: error.message }));
+module.exports.getUserById = (req, res) => {
+  User.findById(req.params.userId)
+    .then((user) => res.send({ data: user }))
+    .catch((error) => res.status(500).send({ message: error.message }));
 };
 
-module.exports.createUser = (request, response) => {
-  const { name, about, avatar } = request.body;
+module.exports.createUser = (req, res) => {
+  const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => response.send({ data: user }))
-    .catch((error) => response.status(500).send({ message: error.message }));
+    .then((user) => res.send({ data: user }))
+    .catch((error) => res.status(500).send({ message: error.message }));
 };
