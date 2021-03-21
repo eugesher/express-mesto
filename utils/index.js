@@ -13,19 +13,3 @@ module.exports.handleNotFoundError = (res) => {
 module.exports.handleServerError = (res) => {
   res.status(500).send({ message: 'На сервере произошла ошибка' });
 };
-
-module.exports.getUserInfo = (user) => ({
-  _id: user.id,
-  name: user.name,
-  about: user.about,
-  avatar: user.avatar,
-});
-
-module.exports.getCardInfo = (card) => ({
-  likes: card.likes,
-  createdAt: card.createdAt,
-  _id: card._id,
-  name: card.name,
-  link: card.link,
-  owner: card.owner,
-});
