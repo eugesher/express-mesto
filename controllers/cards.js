@@ -1,9 +1,10 @@
 const Card = require('../models/card');
+const { handleValidationError, handleNotFoundError, handleServerError } = require('../utils');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((error) => res.status(500).send({ message: error.message }));
+    .catch((err) => handleServerError(err, res));
 };
 
 module.exports.createCard = (req, res) => {
@@ -11,13 +12,19 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
-    .catch((error) => res.status(500).send({ message: error.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') handleValidationError(err, res);
+      else handleServerError(err, res);
+    });
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.send({ data: card }))
-    .catch((error) => res.status(500).send({ message: error.message }));
+    .then((card) => {
+      if (!card) handleNotFoundError(res);
+      else res.send({ data: card });
+    })
+    .catch((err) => handleServerError(err, res));
 };
 
 module.exports.likeCard = (req, res) => {
@@ -26,8 +33,11 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch((error) => res.status(500).send({ message: error.message }));
+    .then((card) => {
+      if (!card) handleNotFoundError(res);
+      else res.send({ data: card });
+    })
+    .catch((err) => handleServerError(err, res));
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -36,6 +46,9 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch((error) => res.status(500).send({ message: error.message }));
+    .then((card) => {
+      if (!card) handleNotFoundError(res);
+      else res.send({ data: card });
+    })
+    .catch((err) => handleServerError(err, res));
 };

@@ -7,7 +7,7 @@ module.exports.handleValidationError = (err, res) => {
 };
 
 module.exports.handleNotFoundError = (res) => {
-  res.status(404).send({ message: 'Пользователь не найден' });
+  res.status(404).send({ message: 'Запрашиваемый ресурс не найден.' });
 };
 
 module.exports.handleServerError = (err, res) => {
