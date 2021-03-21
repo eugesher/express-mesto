@@ -20,3 +20,12 @@ module.exports.getUserInfo = (user) => ({
   about: user.about,
   avatar: user.avatar,
 });
+
+module.exports.getCardInfo = (card) => ({
+  likes: card.likes,
+  createdAt: card.createdAt,
+  _id: card._id,
+  name: card.name,
+  link: card.link,
+  owner: card.owner,
+});
