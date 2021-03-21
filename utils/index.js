@@ -10,7 +10,7 @@ module.exports.handleNotFoundError = (res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден.' });
 };
 
-module.exports.handleServerError = (err, res) => {
+module.exports.handleServerError = (res) => {
   res.status(500).send({ message: 'На сервере произошла ошибка' });
 };
 
