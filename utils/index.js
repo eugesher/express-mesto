@@ -13,3 +13,10 @@ module.exports.handleNotFoundError = (res) => {
 module.exports.handleServerError = (err, res) => {
   res.status(500).send({ message: err.message });
 };
+
+module.exports.getUserInfo = (user) => ({
+  _id: user.id,
+  name: user.name,
+  about: user.about,
+  avatar: user.avatar,
+});
