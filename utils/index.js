@@ -11,7 +11,7 @@ module.exports.handleNotFoundError = (res) => {
 };
 
 module.exports.handleServerError = (err, res) => {
-  res.status(500).send({ message: err.message });
+  res.status(500).send({ message: 'На сервере произошла ошибка' });
 };
 
 module.exports.getUserInfo = (user) => ({
