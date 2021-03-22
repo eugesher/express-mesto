@@ -22,5 +22,8 @@ app.use((req, res, next) => {
   next();
 });
 app.use(router);
+app.use((req, res) => {
+  res.status(404).send({ message: `Ресурс по адресу ${req.path} не найден` });
+});
 
 app.listen(PORT);
