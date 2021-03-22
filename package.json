@@ -7,8 +7,8 @@
     "prettier": "2.2.1"
   },
   "scripts": {
-    "lint": "npx eslint",
-    "start": "PORT=3000 node app.js",
+    "lint": "npx eslint .",
+    "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "dependencies": {
