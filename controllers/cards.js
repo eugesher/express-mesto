@@ -1,6 +1,6 @@
 const Card = require('../models/card');
 const {
-  handleValidationError, handleNotFoundError, handleServerError,
+  handleValidationError, handleCastError, handleNotFoundError, handleServerError,
 } = require('../utils');
 
 module.exports.getCards = (req, res) => {
@@ -26,7 +26,10 @@ module.exports.deleteCard = (req, res) => {
       if (!card) handleNotFoundError(res);
       else res.send(card);
     })
-    .catch((err) => handleServerError(err, res));
+    .catch((err) => {
+      if (err.kind === 'ObjectId') handleCastError(err, res);
+      else handleServerError(err, res);
+    });
 };
 
 module.exports.likeCard = (req, res) => {
@@ -35,7 +38,10 @@ module.exports.likeCard = (req, res) => {
       if (!card) handleNotFoundError(res);
       else res.send(card);
     })
-    .catch((err) => handleServerError(err, res));
+    .catch((err) => {
+      if (err.kind === 'ObjectId') handleCastError(err, res);
+      else handleServerError(err, res);
+    });
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -44,5 +50,8 @@ module.exports.dislikeCard = (req, res) => {
       if (!card) handleNotFoundError(res);
       else res.send(card);
     })
-    .catch((err) => handleServerError(err, res));
+    .catch((err) => {
+      if (err.kind === 'ObjectId') handleCastError(err, res);
+      else handleServerError(err, res);
+    });
 };

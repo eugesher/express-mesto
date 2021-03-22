@@ -6,6 +6,10 @@ module.exports.handleValidationError = (err, res) => {
   });
 };
 
+module.exports.handleCastError = (err, res) => {
+  res.status(400).send({ message: 'Недопустимый идентификатор' });
+};
+
 module.exports.handleNotFoundError = (res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден.' });
 };

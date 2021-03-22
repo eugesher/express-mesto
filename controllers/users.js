@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const {
-  handleValidationError, handleNotFoundError, handleServerError,
+  handleValidationError, handleCastError, handleNotFoundError, handleServerError,
 } = require('../utils');
 
 module.exports.getUsers = (req, res) => {
@@ -15,7 +15,10 @@ module.exports.getUserById = (req, res) => {
       if (!user) handleNotFoundError(res);
       else res.send(user);
     })
-    .catch((err) => handleServerError(err, res));
+    .catch((err) => {
+      if (err.kind === 'ObjectId') handleCastError(err, res);
+      else handleServerError(err, res);
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -35,7 +38,8 @@ module.exports.updateUserInfo = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') handleValidationError(err, res);
+      if (err.kind === 'ObjectId') handleCastError(err, res);
+      else if (err.name === 'ValidationError') handleValidationError(err, res);
       else handleServerError(err, res);
     });
 };
@@ -46,7 +50,8 @@ module.exports.updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') handleValidationError(err, res);
+      if (err.kind === 'ObjectId') handleCastError(err, res);
+      else if (err.name === 'ValidationError') handleValidationError(err, res);
       else handleServerError(err, res);
     });
 };
