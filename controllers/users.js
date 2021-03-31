@@ -1,6 +1,10 @@
 const User = require('../models/user');
 const {
-  handleValidationError, handleCastError, handleNotFoundError, handleServerError,
+  handleValidationError,
+  handleDuplicateEmailError,
+  handleCastError,
+  handleNotFoundError,
+  handleServerError,
 } = require('../utils');
 
 module.exports.getUsers = (req, res) => {
@@ -27,11 +31,16 @@ module.exports.createUser = (req, res) => {
   } = req.body;
 
   User.create({
-    email, password, name, about, avatar,
+    email,
+    password,
+    name,
+    about,
+    avatar,
   })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') handleValidationError(err, res);
+      if (err.code === 11000) handleDuplicateEmailError(res);
+      else if (err.name === 'ValidationError') handleValidationError(err, res);
       else handleServerError(err, res);
     });
 };
