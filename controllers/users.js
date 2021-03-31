@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const {
   handleValidationError,
@@ -30,13 +31,15 @@ module.exports.createUser = (req, res) => {
     email, password, name, about, avatar,
   } = req.body;
 
-  User.create({
-    email,
-    password,
-    name,
-    about,
-    avatar,
-  })
+  bcrypt
+    .hash(password, 8)
+    .then((hash) => User.create({
+      email,
+      password: hash,
+      name,
+      about,
+      avatar,
+    }))
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.code === 11000) handleDuplicateEmailError(res);
