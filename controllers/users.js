@@ -43,7 +43,7 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.code === 11000) handleDuplicateEmailError(res);
-      else if (err.name === 'ValidationError') handleValidationError(err, res);
+      else if (err.name === 'ValidationError') handleValidationError(res);
       else handleServerError(err, res);
     });
 };
