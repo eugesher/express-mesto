@@ -3,6 +3,7 @@
   "rules": {
     "no-underscore-dangle": "off",
     "no-unused-vars": "warn",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "func-names": "off"
   }
 }
