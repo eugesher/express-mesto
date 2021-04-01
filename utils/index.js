@@ -7,7 +7,7 @@ module.exports.handleValidationError = (err, res) => {
 };
 
 module.exports.handleDuplicateEmailError = (res) => {
-  res.status(400).send({ message: 'Пользователь с таким email уже существует.' });
+  res.status(409).send({ message: 'Пользователь с таким email уже существует.' });
 };
 
 module.exports.handleCastError = (res) => {
