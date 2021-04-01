@@ -28,6 +28,18 @@ module.exports.getUserById = (req, res) => {
     });
 };
 
+module.exports.getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) handleNotFoundError(res);
+      else res.send(user);
+    })
+    .catch((err) => {
+      if (err.kind === 'ObjectId') handleCastError(err, res);
+      else handleServerError(err, res);
+    });
+};
+
 module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
 
