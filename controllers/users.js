@@ -28,28 +28,6 @@ module.exports.getUserById = (req, res) => {
     });
 };
 
-module.exports.createUser = (req, res) => {
-  const {
-    email, password, name, about, avatar,
-  } = req.body;
-
-  bcrypt
-    .hash(password, 8)
-    .then((hash) => User.create({
-      email,
-      password: hash,
-      name,
-      about,
-      avatar,
-    }))
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.code === 11000) handleDuplicateEmailError(res);
-      else if (err.name === 'ValidationError') handleValidationError(res);
-      else handleServerError(err, res);
-    });
-};
-
 module.exports.updateUserInfo = (req, res) => {
   const { name, about } = req.body;
 
@@ -92,5 +70,27 @@ module.exports.login = (req, res) => {
       res
         .status(401)
         .send({ message: err.message });
+    });
+};
+
+module.exports.createUser = (req, res) => {
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
+
+  bcrypt
+    .hash(password, 8)
+    .then((hash) => User.create({
+      email,
+      password: hash,
+      name,
+      about,
+      avatar,
+    }))
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.code === 11000) handleDuplicateEmailError(res);
+      else if (err.name === 'ValidationError') handleValidationError(res);
+      else handleServerError(err, res);
     });
 };
