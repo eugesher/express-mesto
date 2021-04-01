@@ -21,3 +21,7 @@ module.exports.handleNotFoundError = (res) => {
 module.exports.handleServerError = (res) => {
   res.status(500).send({ message: 'На сервере произошла ошибка' });
 };
+
+module.exports.handleDeleteNotOwnCardError = (res) => {
+  res.status(403).send({ message: 'Можно удалять только свои карточки' });
+};

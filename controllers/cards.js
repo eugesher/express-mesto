@@ -1,6 +1,10 @@
 const Card = require('../models/card');
 const {
-  handleValidationError, handleCastError, handleNotFoundError, handleServerError,
+  handleValidationError,
+  handleCastError,
+  handleNotFoundError,
+  handleServerError,
+  handleDeleteNotOwnCardError,
 } = require('../utils');
 
 module.exports.getCards = (req, res) => {
@@ -24,6 +28,7 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) handleNotFoundError(res);
+      else if (!card.owner.equals(req.user._id)) handleDeleteNotOwnCardError(res);
       else res.send(card);
     })
     .catch((err) => {
