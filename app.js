@@ -22,8 +22,19 @@ app.post('/signin', login);
 app.post('/signup', createUser);
 app.use(auth);
 app.use(router);
-app.use((req, res) => {
+app.get('*', (req, res) => {
   res.status(404).send({ message: `Ресурс по адресу ${req.path} не найден` });
+});
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
 });
 
 app.listen(PORT);

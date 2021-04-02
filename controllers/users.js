@@ -2,75 +2,74 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
+const NotFoundError = require('../errors/not-found-error');
+const BadRequestError = require('../errors/bad-request-error');
+const ConflictError = require('../errors/conflict-error');
 const {
   handleValidationError,
-  handleDuplicateEmailError,
-  handleCastError,
-  handleNotFoundError,
-  handleServerError,
 } = require('../utils');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => handleServerError(err, res));
+    .catch(next);
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) handleNotFoundError(res);
+      if (!user) throw new NotFoundError('Пользователя не существует');
       else res.send(user);
     })
     .catch((err) => {
-      if (err.kind === 'ObjectId') handleCastError(err, res);
-      else handleServerError(err, res);
+      if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
+      next(err);
     });
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
-      if (!user) handleNotFoundError(res);
+      if (!user) throw new NotFoundError('Пользователя не существует');
       else res.send(user);
     })
     .catch((err) => {
-      if (err.kind === 'ObjectId') handleCastError(err, res);
-      else handleServerError(err, res);
+      if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
+      next(err);
     });
 };
 
-module.exports.updateUserInfo = (req, res) => {
+module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      if (!user) handleNotFoundError(res);
+      if (!user) throw new NotFoundError('Пользователя не существует');
       else res.send(user);
     })
     .catch((err) => {
-      if (err.kind === 'ObjectId') handleCastError(err, res);
+      if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
       else if (err.name === 'ValidationError') handleValidationError(err, res);
-      else handleServerError(err, res);
+      next(err);
     });
 };
 
-module.exports.updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
-      if (!user) handleNotFoundError(res);
+      if (!user) throw new NotFoundError('Пользователя не существует');
       else res.send(user);
     })
     .catch((err) => {
-      if (err.kind === 'ObjectId') handleCastError(err, res);
+      if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
       else if (err.name === 'ValidationError') handleValidationError(err, res);
-      else handleServerError(err, res);
+      next(err);
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
@@ -82,10 +81,11 @@ module.exports.login = (req, res) => {
       res
         .status(401)
         .send({ message: err.message });
+      next(err);
     });
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     email, password, name, about, avatar,
   } = req.body;
@@ -101,8 +101,8 @@ module.exports.createUser = (req, res) => {
     }))
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.code === 11000) handleDuplicateEmailError(res);
+      if (err.code === 11000) next(new ConflictError('Пользователь с таким email уже существует.'));
       else if (err.name === 'ValidationError') handleValidationError(res);
-      else handleServerError(err, res);
+      next(err);
     });
 };
