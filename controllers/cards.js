@@ -2,9 +2,7 @@ const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ForbiddenError = require('../errors/forbidden-error');
-const {
-  handleValidationError,
-} = require('../utils');
+const { handleValidationError } = require('../utils');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -24,11 +22,16 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const { cardId } = req.params;
+  Card.findById(cardId)
     .then((card) => {
       if (!card) throw new NotFoundError('Карточки не существует');
       else if (!card.owner.equals(req.user._id)) throw new ForbiddenError('Можно удалять только свои карточки');
-      else res.send(card);
+      else {
+        Card.findByIdAndRemove(cardId).then((removedCard) => {
+          res.send(removedCard);
+        });
+      }
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор карточки'));
