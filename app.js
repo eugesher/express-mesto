@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const router = require('./routes');
+const errorHandler = require('./errors/error-handler');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -22,19 +23,9 @@ app.post('/signin', login);
 app.post('/signup', createUser);
 app.use(auth);
 app.use(router);
-app.get('*', (req, res) => {
-  res.status(404).send({ message: `Ресурс по адресу ${req.path} не найден` });
-});
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-
-  res
-    .status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
+app.use(errorHandler);
+app.use((req, res) => {
+  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 });
 
 app.listen(PORT);
