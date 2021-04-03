@@ -5,6 +5,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
+const { concatenateErrors } = require('../utils');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -20,7 +21,7 @@ module.exports.getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
-      next(err);
+      else next(err);
     });
 };
 
@@ -32,7 +33,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
-      next(err);
+      else next(err);
     });
 };
 
@@ -46,8 +47,8 @@ module.exports.updateUserInfo = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
-      else if (err.name === 'ValidationError') next(new BadRequestError(err));
-      next(err);
+      else if (err.name === 'ValidationError') next(new BadRequestError(concatenateErrors(err)));
+      else next(err);
     });
 };
 
@@ -61,8 +62,8 @@ module.exports.updateUserAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
-      else if (err.name === 'ValidationError') next(new BadRequestError(err));
-      next(err);
+      else if (err.name === 'ValidationError') next(new BadRequestError(concatenateErrors(err)));
+      else next(err);
     });
 };
 
@@ -99,8 +100,8 @@ module.exports.createUser = (req, res, next) => {
       .then((user) => res.send(user))
       .catch((err) => {
         if (err.code === 11000) next(new ConflictError('Пользователь с таким email уже существует.'));
-        else if (err.name === 'ValidationError') next(new BadRequestError(err));
-        next(err);
+        else if (err.name === 'ValidationError') next(new BadRequestError(concatenateErrors(err)));
+        else next(err);
       });
   }).catch(next);
 };
