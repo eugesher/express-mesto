@@ -7,11 +7,7 @@ const {
   validateUpdateUserAvatarRequest,
 } = require('../middlewares/validations');
 const {
-  getUsers,
-  getUserById,
-  getCurrentUser,
-  updateUserInfo,
-  updateUserAvatar,
+  getUsers, getUserById, getCurrentUser, updateUserInfo, updateUserAvatar,
 } = require('../controllers/users');
 
 router.get('/', validateRequestHeaders, getUsers);

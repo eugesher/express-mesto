@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 
+const { validateLoginCredentials } = require('./middlewares/validations');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const router = require('./routes');
 const errorHandler = require('./errors/error-handler');
-const { validateLoginCredentials } = require('./middlewares/validations');
 
 const { PORT = 3000 } = process.env;
 const app = express();
