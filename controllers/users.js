@@ -88,19 +88,22 @@ module.exports.createUser = (req, res, next) => {
     email, password, name, about, avatar,
   } = req.body;
 
-  bcrypt
-    .hash(password, 8)
-    .then((hash) => User.create({
-      email,
-      password: hash,
-      name,
-      about,
-      avatar,
-    }))
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.code === 11000) next(new ConflictError('Пользователь с таким email уже существует.'));
-      else if (err.name === 'ValidationError') handleValidationError(err, res);
-      next(err);
-    });
+  return new Promise(() => {
+    if (!password) throw new BadRequestError('Поле \'пароль\' не может быть пустым');
+    bcrypt
+      .hash(password, 8)
+      .then((hash) => User.create({
+        email,
+        password: hash,
+        name,
+        about,
+        avatar,
+      }))
+      .then((user) => res.send(user))
+      .catch((err) => {
+        if (err.code === 11000) next(new ConflictError('Пользователь с таким email уже существует.'));
+        else if (err.name === 'ValidationError') handleValidationError(err, res);
+        next(err);
+      });
+  }).catch(next);
 };
