@@ -5,9 +5,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
-const {
-  handleValidationError,
-} = require('../utils');
+const { handleValidationError } = require('../utils');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -102,7 +100,7 @@ module.exports.createUser = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.code === 11000) next(new ConflictError('Пользователь с таким email уже существует.'));
-      else if (err.name === 'ValidationError') handleValidationError(res);
+      else if (err.name === 'ValidationError') handleValidationError(err, res);
       next(err);
     });
 };

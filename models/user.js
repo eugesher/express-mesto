@@ -6,9 +6,9 @@ const { isURL } = require('../utils');
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: true,
+    required: [true, 'Поле \'email\' не может быть пустым'],
     unique: true,
-    validate: validator.isEmail,
+    validate: [validator.isEmail, 'Недопустимый email'],
   },
   password: {
     type: String,
