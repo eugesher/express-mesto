@@ -5,7 +5,6 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
-const { handleValidationError } = require('../utils');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -47,7 +46,7 @@ module.exports.updateUserInfo = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
-      else if (err.name === 'ValidationError') handleValidationError(err, res);
+      else if (err.name === 'ValidationError') next(new BadRequestError(err));
       next(err);
     });
 };
@@ -62,7 +61,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') next(new BadRequestError('Недопустимый идентификатор пользователя'));
-      else if (err.name === 'ValidationError') handleValidationError(err, res);
+      else if (err.name === 'ValidationError') next(new BadRequestError(err));
       next(err);
     });
 };
@@ -89,7 +88,7 @@ module.exports.createUser = (req, res, next) => {
   } = req.body;
 
   return new Promise(() => {
-    if (!password) throw new BadRequestError('Поле \'пароль\' не может быть пустым');
+    if (!email || !password) throw new BadRequestError('Не заполнены обязательные поля');
     bcrypt
       .hash(password, 8)
       .then((hash) => User.create({
@@ -102,7 +101,7 @@ module.exports.createUser = (req, res, next) => {
       .then((user) => res.send(user))
       .catch((err) => {
         if (err.code === 11000) next(new ConflictError('Пользователь с таким email уже существует.'));
-        else if (err.name === 'ValidationError') handleValidationError(err, res);
+        else if (err.name === 'ValidationError') next(new BadRequestError(err));
         next(err);
       });
   }).catch(next);

@@ -1,11 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const router = require('./routes');
 const errorHandler = require('./errors/error-handler');
+// const { validateLoginCredentials } = require('./middlewares/validations');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -23,6 +25,7 @@ app.post('/signin', login);
 app.post('/signup', createUser);
 app.use(auth);
 app.use(router);
+app.use(errors());
 app.use(errorHandler);
 app.use((req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
