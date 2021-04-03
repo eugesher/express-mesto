@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { isURL } = require('../utils');
+const { linkPattern } = require('../utils');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -12,7 +12,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: [true, 'Поле \'ссылка\' не может быть пустым'],
-    validate: [isURL, 'Поле \'ссылка\' должно содержать ссылку'],
+    validate: { validator: (v) => linkPattern.test(v), message: 'Поле \'ссылка\' должно содержать ссылку' },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
