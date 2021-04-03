@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const { isURL } = require('../utils');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -32,6 +33,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: [isURL, 'Поле \'аватар\' должно содержать ссылку'],
   },
 });
 
