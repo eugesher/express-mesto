@@ -100,7 +100,11 @@ module.exports.createUser = (req, res, next) => {
         about,
         avatar,
       }))
-      .then((user) => res.send(user))
+      .then((user) => {
+        const u = user.toObject();
+        delete u.password;
+        res.send(u);
+      })
       .catch((err) => {
         if (err.code === 11000) next(new ConflictError('Пользователь с таким email уже существует.'));
         else if (err.name === 'ValidationError') next(new BadRequestError(concatenateErrors(err)));
