@@ -34,7 +34,7 @@ module.exports.validateGetUserByIdRequest = celebrate({
     })
     .unknown(true),
   params: Joi.object().keys({
-    userId: Joi.string().required().alphanum().length(24),
+    userId: Joi.string().required().hex().length(24),
   }),
 });
 
@@ -80,6 +80,6 @@ module.exports.validateCardId = celebrate({
     })
     .unknown(true),
   params: Joi.object().keys({
-    cardId: Joi.string().required().alphanum().length(24),
+    cardId: Joi.string().required().hex().length(24),
   }),
 });
