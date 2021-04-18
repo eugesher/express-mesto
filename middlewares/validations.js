@@ -9,6 +9,16 @@ module.exports.validateLoginCredentials = celebrate({
   }),
 });
 
+module.exports.validateSignupRequest = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().regex(linkPattern),
+  }),
+});
+
 module.exports.validateRequestHeaders = celebrate({
   headers: Joi.object()
     .keys({
