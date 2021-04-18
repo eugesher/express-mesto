@@ -11,6 +11,7 @@ const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const router = require('./routes');
 const errorHandler = require('./errors/error-handler');
+const NotFoundError = require('./errors/not-found-error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
@@ -43,9 +44,9 @@ app.use(router);
 
 app.use(errorLogger);
 app.use(errors());
-app.use(errorHandler);
-app.use((req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+app.use((req, res, next) => {
+  next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
+app.use(errorHandler);
 
 app.listen(PORT);
