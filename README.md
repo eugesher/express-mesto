@@ -1,4 +1,4 @@
-# Бэкэнд для проекта Mesto
+# Backend for the Mesto project 
 
-`npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
+`npm run start` — start server 
+`npm run dev` — start server with hot-reload
